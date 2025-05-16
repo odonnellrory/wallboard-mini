@@ -1,0 +1,97 @@
+--- ./all_files.txt ---
+
+
+--- ./background.js ---
+chrome.browserAction.onClicked.addListener(() => {
+  chrome.tabs.create({ url: chrome.runtime.getURL("index.html") });
+});
+
+
+--- ./combine.sh ---
+#!/bin/bash
+
+output="all_files.txt"
+> "$output"  
+
+find . -type f | sort | while read -r file; do
+  echo "--- $file ---" >> "$output"
+  cat "$file" >> "$output"
+  echo -e "\n" >> "$output"
+done
+
+
+--- ./index.html ---
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wallboard-Mini</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="grid-container" id="grid"></div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+--- ./manifest.json ---
+{
+  "manifest_version": 2,
+  "name": "Wallboard-Mini",
+  "version": "1.0",
+  "description": "Display 8 wallboard pages in a grid layout.",
+  "permissions": ["tabs"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Wallboard-Mini"
+  },
+  "host_permissions": ["<all_urls>"]
+}
+
+
+--- ./script.js ---
+const urls = [
+  "https://example.com",
+  "https://example.org",
+  "https://duckduckgo.com",
+  "https://wikipedia.org",
+  "https://github.com",
+  "https://news.ycombinator.com",
+  "https://archlinux.org",
+  "https://mozilla.org"
+];
+
+const grid = document.getElementById("grid");
+
+urls.forEach(url => {
+  const iframe = document.createElement("iframe");
+  iframe.src = url;
+  grid.appendChild(iframe);
+});
+
+
+--- ./style.css ---
+body {
+  margin: 0;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 50vh);
+  width: 100vw;
+  height: 100vh;
+}
+
+.grid-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+
