@@ -1,0 +1,1 @@
+It's a browser extension that displays 8 miniature windows.  You can set the URL of each window in the files. Letting you have a button in the browser to instantly view up to 8 sites at the same time.
